@@ -1,0 +1,37 @@
+{
+  "name": "tweetarchive",
+  "version": "1.0.0",
+  "description": "An archiver for tweets. Useful for media agencies and enthusiastic journalists.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xu-chris/tweetarchive.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xu-chris/tweetarchive/issues"
+  },
+  "homepage": "https://github.com/xu-chris/tweetarchive#readme",
+  "devDependencies": {
+    "@types/lowdb": "^1.0.11",
+    "@types/node": "^18.11.9",
+    "tslint": "^6.1.3",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@tcortega/twitter-scraper": "^0.2.4",
+    "dotenv": "^16.0.3",
+    "lowdb-adapter": "^0.1.3",
+    "telegraf": "^4.11.2"
+  },
+  "engines": {
+    "node": "18.12",
+    "npm": "8.19"
+  }
+}
