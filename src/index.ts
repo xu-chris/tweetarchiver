@@ -1,7 +1,7 @@
 import { Context, Markup, Telegraf, Telegram } from 'telegraf';
 import { Update } from 'typegram';
 import * as dotenv from 'dotenv'
-import { TweetArchiver } from './service/twitter';
+import { TweetArchiver } from './service/TweetArchiver';
 dotenv.config()
 
 const bot: Telegraf<Context<Update>> = new Telegraf(process.env.BOT_TOKEN as string);
@@ -45,35 +45,39 @@ bot.command('archive', (ctx) => {
     'Send the twitter link which should be archived'
   );
 });
+
 bot.on('text', async (ctx) => {
+  const link = ctx.message.text;
+
   try {
-    const link = decideOnTwitterLink(ctx.message.text);
-    ctx.reply(
-      'tweet stored in archives 👍' 
-    )
+    if (!link.includes('twitter.com') ) {
+      console.error('Not a twitter link: ' + link)
+      ctx.reply(
+        'This message is not a twitter link. It must contain twitter.com .'
+      );
+      return;
+    }
+    
+    if (link.includes('status')) {
+      await tweetArchiver.archiveTweet(link)
+      ctx.reply(
+        'tweet stored in archives 👍' 
+      )
+    } else if (link.includes('search?q=')) {
+      ctx.reply(
+        'I\'ll watch this search. Since when should the tweets been archived?',
+        Markup.forceReply()
+      );
+    } else {
+      tweetArchiver.archiveTweet(link)
+    } 
   } catch {
+    console.error('Something went wrong while trying to fetch ' + link);
     ctx.reply(
-      'This message is not a twitter link.'
+      'Something went terribly wrong. Mind if you might alter your message a bit?'
     );
   }
 });
-
-// Addition: Check if 1 single tweet, 2 twitter user, or 3 search query.
-function decideOnTwitterLink (link: string) {
-  // Fallback for no twitter link
-  if (!link.includes('twitter.com') ) {
-    console.error('Not a twitter link: ' + link)
-    throw "No twitter link!"
-  }
-  
-  if (link.includes('status')) {
-    tweetArchiver.archiveTweet(link)
-  } else if (link.includes('search?q=')) {
-    // Option 3
-  } else {
-    tweetArchiver.archiveTweet(link)
-  } 
-}
 
 // If option 2, 3: Ask for start date and end date
 // function getStartAndEndDate () : [Date, Date] {

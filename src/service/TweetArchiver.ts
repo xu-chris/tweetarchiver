@@ -3,7 +3,7 @@ import fs from 'fs'
 import { ITweetMediaMetaData, TwitterScraper } from '@tcortega/twitter-scraper'
 import https from 'https'
 import path from 'path'
-import Store from './store'
+import Store from './Store'
 
 export interface TweetArchivedCallback {
     (message: string): void;
@@ -40,9 +40,10 @@ export class TweetArchiver {
             const twtScraper = await TwitterScraper.create();
             const tweetMeta = await twtScraper.getTweetMeta(url);
 
-            if (this._store.knownIds.indexOf(tweetMeta.id) !== -1) return;
-
-            console.log(tweetMeta);
+            if (this._store.get.indexOf(tweetMeta.id) !== -1) {
+                console.log('Skipping tweet ' + url + ' since ID of ' + tweetMeta.id + ' exists in the archive.')
+                return;
+            }
 
             // Create folder
             const formattedDate: string = new Date(tweetMeta.created_at).toISOString();
@@ -102,7 +103,7 @@ export class TweetArchiver {
             }
 
             // Store ID
-            this._store.addId(tweetMeta.id)
+            this._store.add(tweetMeta.id)
             
             callback;
         } catch (error) {

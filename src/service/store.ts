@@ -1,6 +1,5 @@
 import FileSync from 'lowdb/adapters/FileSync';
 import * as dotenv from 'dotenv'
-import path from 'path';
 
 // This is somehow leading to a compiler error when formulated as import statement.
 const low = require('lowdb')
@@ -13,20 +12,20 @@ export default class Store {
   constructor(name: string) {
     dotenv.config()
 
-    this._db = low(new FileSync('./data/history.json'));
+    this._db = low(new FileSync('./data/db.json'));
 
     this._name = name
     this._db.defaults({ [name]: [] }).write()
   }
 
-  get knownIds() {
+  get get() {
     return this._db.get(this._name).value()
   }
 
-  addId(id: string) {
+  add(item: any) {
     this._db
       .get(this._name)
-      .push(id)
+      .push(item)
       .write()
   }
 }
