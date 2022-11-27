@@ -1,3 +1,4 @@
+import fs from 'fs'
 import FileSync from 'lowdb/adapters/FileSync';
 import * as dotenv from 'dotenv'
 
@@ -9,10 +10,16 @@ export default class Store {
   private _name: string;
   private _db;
 
-  constructor(name: string) {
+  constructor(name: string, baseDir: string) {
     dotenv.config()
 
-    this._db = low(new FileSync('./data/db.json'));
+    const dir = baseDir + '/db/'
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir, { recursive: true });
+        console.log('Created archive folder: ' + dir)
+    } 
+
+    this._db = low(new FileSync(baseDir + '/db/db.json'));
 
     this._name = name
     this._db.defaults({ [name]: [] }).write()

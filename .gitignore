@@ -6,7 +6,7 @@
 *.env
 
 ### Specified gitignore
-data/*
+data/db.json
 data/archive/*
 
 ### Node ###

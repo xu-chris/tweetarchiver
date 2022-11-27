@@ -4,8 +4,15 @@ import * as dotenv from 'dotenv'
 import { TweetArchiver } from './service/TweetArchiver';
 dotenv.config()
 
+declare global {
+  var __basedir: string
+}
+
+globalThis.__basedir = __dirname
+
 const bot: Telegraf<Context<Update>> = new Telegraf(process.env.BOT_TOKEN as string);
-const tweetArchiver: TweetArchiver = new TweetArchiver();
+const tweetArchiver: TweetArchiver = new TweetArchiver(__basedir);
+
 
 bot.start((ctx) => {
   ctx.reply('Hello ' + ctx.from.first_name + '!');

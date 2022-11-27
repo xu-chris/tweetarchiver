@@ -3,7 +3,7 @@ import fs from 'fs'
 import { ITweetMediaMetaData, TwitterScraper } from '@tcortega/twitter-scraper'
 import https from 'https'
 import path from 'path'
-import Store from './Store'
+import Store from './store'
 
 export interface TweetArchivedCallback {
     (message: string): void;
@@ -13,23 +13,23 @@ export class TweetArchiver {
     private _store!: Store
     private _dir!: string
     
-    constructor () {
-        this.setupArchive();
-        this.setupStoreFile();
+    constructor (baseDir: string) {
+        this.setupArchive(baseDir);
+        this.setupStoreFile(baseDir);
     }
     
-    setupArchive () {
+    setupArchive (baseDir: string) {
         dotenv.config()
     
-        this._dir = <string>process.env.ROOT_PATH + 'archive/'
+        this._dir = baseDir + '/archive/'
         if (!fs.existsSync(this._dir)){
             fs.mkdirSync(this._dir, { recursive: true });
             console.log('Created archive folder: ' + this._dir)
         }
     }
 
-    setupStoreFile () {
-        this._store = new Store('tweet')
+    setupStoreFile (baseDir: string) {
+        this._store = new Store('tweet', baseDir)
     }
     
     async archiveTweet (url: string, callback?: TweetArchivedCallback) {
@@ -47,7 +47,7 @@ export class TweetArchiver {
 
             // Create folder
             const formattedDate: string = new Date(tweetMeta.created_at).toISOString();
-            const dir = this._dir + <string>tweetMeta.id + ' - ' + formattedDate
+            const dir = this._dir + formattedDate + ' - ' + <string>tweetMeta.id
             if (!fs.existsSync(dir)){
                 fs.mkdirSync(dir)
             }
