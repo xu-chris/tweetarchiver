@@ -1,16 +1,20 @@
 import FileSync from 'lowdb/adapters/FileSync';
 import * as dotenv from 'dotenv'
-import low from 'lowdb';
+import path from 'path';
 
-const DB_PATH = process.env.ROOT_PATH + 'history.json'
+// This is somehow leading to a compiler error when formulated as import statement.
+const low = require('lowdb')
 
 export default class Store {
   
   private _name: string;
-  private _db = low(new FileSync(DB_PATH));
+  private _db;
 
   constructor(name: string) {
     dotenv.config()
+
+    this._db = low(new FileSync('./data/history.json'));
+
     this._name = name
     this._db.defaults({ [name]: [] }).write()
   }
